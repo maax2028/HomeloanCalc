@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f3f7fc">
-  <meta name="description" content="Mobile-friendly Indian Home Loan Calculator V.16 - Mukesh Kumar for EMI, early payoff, extra payments, maturity date, and estimated interest savings.">
-  <title> Home Loan Calculator V.16 - Mukesh Kumar </title>
+  <meta name="description" content="Mobile-friendly Indian home loan calculator for EMI, early payoff, extra payments, maturity date, and estimated interest savings.">
+  <title>Home Loan Calculator - Indian Numbering</title>
   <style>
     :root {
       --bg: #f3f7fc;
@@ -126,6 +126,15 @@
     .btn-secondary:hover { background: #e3eef9; }
     .btn-danger { color: #9f1730; background: #fff0f2; border-color: #e8abb5; }
     .btn-danger:hover { background: #ffe5e9; }
+    .scenario-calculate {
+      width: 100%;
+      margin-top: 15px;
+      color: #fff;
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 8px 18px var(--button-shadow);
+    }
+    .scenario-calculate:hover { filter: brightness(.96); }
 
     .status { display: none; margin-top: 14px; padding: 12px 14px; border-radius: 10px; font-weight: 650; }
     .status.show { display: block; }
@@ -154,9 +163,9 @@
     }
     .scenario::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 5px; background: var(--accent); }
     .scenario::after { content: ""; position: absolute; width: 110px; height: 110px; right: -62px; top: -62px; border-radius: 50%; background: var(--scenario-orb); pointer-events: none; }
-    .scenario-blue { --accent: #1d6fe8; --scenario-tint: #f2f7ff; --scenario-line: #bbd2ef; --scenario-orb: rgba(29,111,232,.12); }
-    .scenario-purple { --accent: #7c3aed; --scenario-tint: #f8f4ff; --scenario-line: #d7c4f2; --scenario-orb: rgba(124,58,237,.11); }
-    .scenario-green { --accent: #087f5b; --scenario-tint: #f0faf6; --scenario-line: #b9dece; --scenario-orb: rgba(8,127,91,.10); }
+    .scenario-blue { --accent: #1d6fe8; --scenario-tint: #f2f7ff; --scenario-line: #bbd2ef; --scenario-orb: rgba(29,111,232,.12); --button-shadow: rgba(29,111,232,.24); }
+    .scenario-purple { --accent: #7c3aed; --scenario-tint: #f8f4ff; --scenario-line: #d7c4f2; --scenario-orb: rgba(124,58,237,.11); --button-shadow: rgba(124,58,237,.24); }
+    .scenario-green { --accent: #087f5b; --scenario-tint: #f0faf6; --scenario-line: #b9dece; --scenario-orb: rgba(8,127,91,.10); --button-shadow: rgba(8,127,91,.24); }
     .scenario-number { color: var(--accent); }
     .scenario-copy { min-height: 54px; margin: 7px 0 15px; color: var(--muted); font-size: .79rem; }
     .scenario .field + .field { margin-top: 12px; }
@@ -208,7 +217,7 @@
 <body>
   <main class="page">
     <header class="hero">
-      <h1>Home Loan Payoff Calculator V.16 - Mukesh Kumar</h1>
+      <h1>Home Loan Payoff Calculator</h1>
       <p>Compare a higher EMI, a target payoff year, and one or more extra EMI payments—with Indian number formatting and estimated interest savings.</p>
     </header>
 
@@ -267,6 +276,7 @@
             <input id="newEmiExtras" type="number" inputmode="numeric" min="0" max="24" step="1" value="0">
             <small class="hint">Optional: 0 to 24 extra payments, spread across the year.</small>
           </div>
+          <button class="btn scenario-calculate" id="calculateHigherEmiBtn" type="button" aria-controls="resultHigherEmi">Calculate Section 1</button>
           <div id="resultHigherEmi" class="result-box"><p class="placeholder">Enter values and calculate.</p></div>
         </article>
 
@@ -292,6 +302,7 @@
             <input id="goalExtras" type="number" inputmode="numeric" min="0" max="24" step="1" value="0">
             <small class="hint">Optional extras reduce the required regular EMI.</small>
           </div>
+          <button class="btn scenario-calculate" id="calculateGoalBtn" type="button" aria-controls="resultGoal">Calculate Section 2</button>
           <div id="resultGoal" class="result-box"><p class="placeholder">Enter values and calculate.</p></div>
         </article>
 
@@ -303,6 +314,7 @@
             <input id="standaloneExtras" type="number" inputmode="numeric" min="0" max="24" step="1" value="1">
             <small class="hint">Whole number from 0 to 24, distributed across the year.</small>
           </div>
+          <button class="btn scenario-calculate" id="calculateExtrasBtn" type="button" aria-controls="resultExtras">Calculate Section 3</button>
           <div id="resultExtras" class="result-box"><p class="placeholder">Enter values and calculate.</p></div>
         </article>
       </div>
@@ -315,7 +327,7 @@
       <div class="actions"><button class="btn btn-danger" id="clearHistoryBtn" type="button">Clear History</button></div>
     </section>
 
-    <footer>Thank you for using this Calculator • Data stays in this browser using local storage - Prem Academy</footer>
+    <footer>Browser edition for GitHub Pages • Data stays in this browser using local storage</footer>
   </main>
 
   <script>
@@ -736,6 +748,9 @@
     });
 
     $("calculateBtn").addEventListener("click", calculateAll);
+    $("calculateHigherEmiBtn").addEventListener("click", calculateAll);
+    $("calculateGoalBtn").addEventListener("click", calculateAll);
+    $("calculateExtrasBtn").addEventListener("click", calculateAll);
     $("resetBtn").addEventListener("click", resetForm);
     $("downloadBtn").addEventListener("click", downloadCurrentResult);
     $("goalType").addEventListener("change", updateGoalLabels);
