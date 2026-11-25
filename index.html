@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f3f7fc">
+  <meta name="description" content="Mobile-friendly Indian Home Loan Calculator V.16 - Mukesh Kumar for EMI, early payoff, extra payments, maturity date, and estimated interest savings.">
+  <title> Home Loan Calculator V.16 - Mukesh Kumar </title>
+  <style>
+    :root {
+      --bg: #f3f7fc;
+      --surface: rgba(255, 255, 255, .96);
+      --surface-2: #f7faff;
+      --line: #cfdbea;
+      --text: #132238;
+      --muted: #52677e;
+      --blue: #2563eb;
+      --blue-2: #1d6fe8;
+      --purple: #7c3aed;
+      --green: #087f5b;
+      --orange: #b45309;
+      --red: #b4233a;
+      --shadow: 0 14px 38px rgba(38, 68, 105, .12);
+      --shadow-soft: 0 7px 22px rgba(38, 68, 105, .09);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 10% 4%, rgba(37,99,235,.10), transparent 28rem),
+        radial-gradient(circle at 95% 25%, rgba(124,58,237,.08), transparent 26rem),
+        radial-gradient(circle at 55% 100%, rgba(8,127,91,.07), transparent 30rem),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 44%, #edf4fb 100%);
+      line-height: 1.5;
+    }
+
+    button, input, select { font: inherit; }
+    button { touch-action: manipulation; }
+    .page { width: min(1180px, 100%); margin: 0 auto; padding: 22px; }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 30px;
+      border: 1px solid #c9dcf5;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #ffffff 0%, #edf5ff 58%, #f5efff 100%);
+      box-shadow: var(--shadow);
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--blue), var(--purple), #11a36f);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 270px;
+      height: 270px;
+      right: -95px;
+      top: -145px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(37,99,235,.16), rgba(124,58,237,.12));
+    }
+    h1 { position: relative; z-index: 1; margin: 0; color: #12335a; font-size: clamp(1.65rem, 4vw, 2.55rem); line-height: 1.15; letter-spacing: -.02em; }
+    .hero p { position: relative; z-index: 1; max-width: 760px; margin: 10px 0 0; color: var(--muted); }
+
+    .panel {
+      margin-top: 18px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+    .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 17px; }
+    h2, h3 { margin: 0; color: #173250; line-height: 1.25; }
+    h2 { font-size: 1.25rem; }
+    h3 { font-size: 1.08rem; }
+    .section-rule { flex: 1; height: 1px; background: linear-gradient(90deg, #70a7ef, rgba(112,167,239,0)); }
+
+    .input-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .field { min-width: 0; }
+    label { display: block; margin-bottom: 7px; color: #263e59; font-size: .91rem; font-weight: 700; }
+    input, select {
+      width: 100%;
+      min-height: 47px;
+      padding: 10px 12px;
+      color: #162b43;
+      background: #fff;
+      border: 1px solid #aebfd1;
+      border-radius: 10px;
+      outline: none;
+      box-shadow: inset 0 1px 2px rgba(34,64,98,.04);
+      transition: border-color .18s, box-shadow .18s, transform .18s;
+    }
+    input:hover, select:hover { border-color: #829bb5; }
+    input:focus, select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.16); }
+    input::placeholder { color: #7b8da0; opacity: 1; }
+    .hint { display: block; margin-top: 6px; min-height: 1.2em; color: var(--muted); font-size: .76rem; }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .btn {
+      min-height: 47px;
+      padding: 10px 18px;
+      border: 1px solid transparent;
+      border-radius: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .15s, filter .15s, box-shadow .15s, background .15s;
+    }
+    .btn:hover { filter: brightness(1.03); transform: translateY(-1px); }
+    .btn:focus-visible { outline: 3px solid rgba(37,99,235,.25); outline-offset: 2px; }
+    .btn:active { transform: translateY(0); }
+    .btn-primary { color: #fff; background: linear-gradient(135deg, #1d5fd3, #2979ee); box-shadow: 0 8px 20px rgba(37,99,235,.22); }
+    .btn-secondary { color: #173250; background: #edf4fc; border-color: #b8cbe0; }
+    .btn-secondary:hover { background: #e3eef9; }
+    .btn-danger { color: #9f1730; background: #fff0f2; border-color: #e8abb5; }
+    .btn-danger:hover { background: #ffe5e9; }
+
+    .status { display: none; margin-top: 14px; padding: 12px 14px; border-radius: 10px; font-weight: 650; }
+    .status.show { display: block; }
+    .status.error { border: 1px solid #e39aa6; color: #921a30; background: #fff0f2; }
+    .status.warning { border: 1px solid #e6bb7e; color: #7a3d00; background: #fff8e8; }
+
+    .baseline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .metric { padding: 14px; border-radius: 12px; background: linear-gradient(180deg, #f9fcff, #f2f7fc); border: 1px solid #ccdae8; box-shadow: var(--shadow-soft); }
+    .metric span { display: block; color: var(--muted); font-size: .77rem; }
+    .metric strong { display: block; margin-top: 4px; color: #183856; font-size: 1.03rem; overflow-wrap: anywhere; }
+
+    .scenario-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: start; }
+    .scenario {
+      position: relative;
+      overflow: hidden;
+      padding: 18px;
+      border: 1px solid var(--scenario-line);
+      border-radius: 15px;
+      background: linear-gradient(160deg, #fff 0%, var(--scenario-tint) 100%);
+      box-shadow: var(--shadow-soft);
+    }
+    .scenario::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 5px; background: var(--accent); }
+    .scenario::after { content: ""; position: absolute; width: 110px; height: 110px; right: -62px; top: -62px; border-radius: 50%; background: var(--scenario-orb); pointer-events: none; }
+    .scenario-blue { --accent: #1d6fe8; --scenario-tint: #f2f7ff; --scenario-line: #bbd2ef; --scenario-orb: rgba(29,111,232,.12); }
+    .scenario-purple { --accent: #7c3aed; --scenario-tint: #f8f4ff; --scenario-line: #d7c4f2; --scenario-orb: rgba(124,58,237,.11); }
+    .scenario-green { --accent: #087f5b; --scenario-tint: #f0faf6; --scenario-line: #b9dece; --scenario-orb: rgba(8,127,91,.10); }
+    .scenario-number { color: var(--accent); }
+    .scenario-copy { min-height: 54px; margin: 7px 0 15px; color: var(--muted); font-size: .79rem; }
+    .scenario .field + .field { margin-top: 12px; }
+    .target-row { display: grid; grid-template-columns: 1fr; gap: 12px; }
+
+    .result-box { margin-top: 15px; min-height: 174px; padding: 14px; border-radius: 11px; background: rgba(255,255,255,.88); border: 1px solid var(--scenario-line); }
+    .placeholder { color: var(--muted); font-size: .86rem; }
+    .result-row { padding: 8px 0; border-bottom: 1px solid #dfe7f0; }
+    .result-row:last-child { border-bottom: 0; }
+    .result-row span { display: block; color: var(--muted); font-size: .74rem; }
+    .result-row strong { display: block; margin-top: 2px; color: #172f49; font-size: .95rem; }
+    .positive { color: #08724f !important; }
+
+    .assumption { margin: 15px 2px 0; color: var(--muted); font-size: .77rem; }
+
+    .history-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+    table { width: 100%; border-collapse: collapse; min-width: 780px; }
+    th, td { padding: 11px 12px; border-bottom: 1px solid #dbe5ef; text-align: left; font-size: .8rem; vertical-align: top; }
+    th { color: #173552; background: #edf4fc; }
+    td { color: #334d67; }
+    tbody tr:nth-child(even) { background: #f9fbfe; }
+    tbody tr:hover { background: #f1f6fc; }
+    tr:last-child td { border-bottom: 0; }
+    .empty-history { padding: 18px; color: var(--muted); text-align: center; }
+
+    footer { padding: 19px 5px 8px; color: #5f7388; text-align: center; font-size: .76rem; }
+
+    @media (max-width: 940px) {
+      .input-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .scenario-grid { grid-template-columns: 1fr; }
+      .scenario-copy { min-height: 0; }
+      .baseline { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .page { padding: 12px; }
+      .hero, .panel { padding: 17px; border-radius: 16px; }
+      .input-grid, .baseline { grid-template-columns: 1fr; }
+      .actions { display: grid; grid-template-columns: 1fr; }
+      .btn { width: 100%; }
+      .metric { padding: 12px; }
+      .panel-heading { align-items: flex-start; }
+      h1 { font-size: 1.7rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <h1>Home Loan Payoff Calculator V.16 - Mukesh Kumar</h1>
+      <p>Compare a higher EMI, a target payoff year, and one or more extra EMI payments—with Indian number formatting and estimated interest savings.</p>
+    </header>
+
+    <section class="panel" aria-labelledby="loan-details-title">
+      <div class="panel-heading"><h2 id="loan-details-title">Loan Details</h2><div class="section-rule"></div></div>
+      <div class="input-grid">
+        <div class="field">
+          <label for="loanAmount">Outstanding Loan Amount (₹)</label>
+          <input id="loanAmount" type="text" inputmode="decimal" autocomplete="off" placeholder="75,00,000" data-money>
+          <small class="hint">Example: 7500000 becomes 75,00,000</small>
+        </div>
+        <div class="field">
+          <label for="annualRate">Annual Interest Rate (%)</label>
+          <input id="annualRate" type="number" inputmode="decimal" min="0" max="100" step="0.01" placeholder="8.45">
+          <small class="hint">Enter the current floating or fixed ROI.</small>
+        </div>
+        <div class="field">
+          <label for="currentEmi">Current Monthly EMI (₹)</label>
+          <input id="currentEmi" type="text" inputmode="decimal" autocomplete="off" placeholder="60,000" data-money>
+          <small class="hint">Your present scheduled monthly EMI.</small>
+        </div>
+        <div class="field">
+          <label for="maturityDate">Current Maturity Date</label>
+          <input id="maturityDate" type="date">
+          <small class="hint">Used as the baseline for time and interest saved.</small>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="calculateBtn" type="button">Calculate All Scenarios</button>
+        <button class="btn btn-secondary" id="resetBtn" type="button">Reset</button>
+        <button class="btn btn-secondary" id="downloadBtn" type="button">Download Current Result</button>
+      </div>
+      <div id="status" class="status" role="alert" aria-live="polite"></div>
+
+      <div id="baseline" class="baseline" aria-live="polite">
+        <div class="metric"><span>Current maturity</span><strong>—</strong></div>
+        <div class="metric"><span>Time remaining</span><strong>—</strong></div>
+        <div class="metric"><span>Projected remaining interest</span><strong>—</strong></div>
+        <div class="metric"><span>Calculated payoff at current EMI</span><strong>—</strong></div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="scenarios-title">
+      <div class="panel-heading"><h2 id="scenarios-title">Repayment Scenarios</h2><div class="section-rule"></div></div>
+      <div class="scenario-grid">
+        <article class="scenario scenario-blue">
+          <h3><span class="scenario-number">1.</span> Increase Monthly EMI</h3>
+          <p class="scenario-copy">Enter a higher monthly EMI and optionally add extra EMI payments each year.</p>
+          <div class="field">
+            <label for="newEmi">Proposed Higher EMI (₹)</label>
+            <input id="newEmi" type="text" inputmode="decimal" autocomplete="off" placeholder="90,000" data-money>
+          </div>
+          <div class="field">
+            <label for="newEmiExtras">Extra EMI Payments / Year</label>
+            <input id="newEmiExtras" type="number" inputmode="numeric" min="0" max="24" step="1" value="0">
+            <small class="hint">Optional: 0 to 24 extra payments, spread across the year.</small>
+          </div>
+          <div id="resultHigherEmi" class="result-box"><p class="placeholder">Enter values and calculate.</p></div>
+        </article>
+
+        <article class="scenario scenario-purple">
+          <h3><span class="scenario-number">2.</span> Payoff Period or Year</h3>
+          <p class="scenario-copy">Choose a period from today or a target payoff year, then see the required monthly EMI.</p>
+          <div class="target-row">
+            <div class="field">
+              <label for="goalType">Payoff Goal Type</label>
+              <select id="goalType">
+                <option value="years">Pay off in a number of years</option>
+                <option value="year">Target payoff year</option>
+              </select>
+            </div>
+            <div class="field">
+              <label id="goalValueLabel" for="goalValue">Payoff Period (Years)</label>
+              <input id="goalValue" type="number" inputmode="numeric" min="1" max="50" step="1" placeholder="3">
+              <small id="goalHint" class="hint">Example: 3 means three years from today.</small>
+            </div>
+          </div>
+          <div class="field">
+            <label for="goalExtras">Extra EMI Payments / Year</label>
+            <input id="goalExtras" type="number" inputmode="numeric" min="0" max="24" step="1" value="0">
+            <small class="hint">Optional extras reduce the required regular EMI.</small>
+          </div>
+          <div id="resultGoal" class="result-box"><p class="placeholder">Enter values and calculate.</p></div>
+        </article>
+
+        <article class="scenario scenario-green">
+          <h3><span class="scenario-number">3.</span> Extra EMI Payments / Year</h3>
+          <p class="scenario-copy">Keep the current monthly EMI and make one or more additional EMI payments each year.</p>
+          <div class="field">
+            <label for="standaloneExtras">Number of Extra EMI Payments / Year</label>
+            <input id="standaloneExtras" type="number" inputmode="numeric" min="0" max="24" step="1" value="1">
+            <small class="hint">Whole number from 0 to 24, distributed across the year.</small>
+          </div>
+          <div id="resultExtras" class="result-box"><p class="placeholder">Enter values and calculate.</p></div>
+        </article>
+      </div>
+      <p class="assumption">Estimates use monthly reducing-balance interest from today. Extra annual EMI payments are distributed evenly across 12 months. Baseline interest is projected to the earlier of the entered maturity date or calculated payoff at the current EMI. Actual lender results may differ because of daily-interest rules, EMI dates, rate changes, fees, and payment timing.</p>
+    </section>
+
+    <section class="panel" aria-labelledby="history-title">
+      <div class="panel-heading"><h2 id="history-title">Last 7 Results</h2><div class="section-rule"></div></div>
+      <div id="historyContainer" class="history-wrap"></div>
+      <div class="actions"><button class="btn btn-danger" id="clearHistoryBtn" type="button">Clear History</button></div>
+    </section>
+
+    <footer>Thank you for using this Calculator • Data stays in this browser using local storage - Prem Academy</footer>
+  </main>
+
+  <script>
+    "use strict";
+
+    const STORAGE_KEY = "homeLoanCalculatorHistoryV1";
+    const MAX_MONTHS = 1200;
+    let latestResult = null;
+
+    const $ = id => document.getElementById(id);
+    const moneyInputs = document.querySelectorAll("[data-money]");
+
+    function parseMoney(value) {
+      const cleaned = String(value || "").replace(/,/g, "").replace(/[^0-9.]/g, "");
+      const number = Number(cleaned);
+      return Number.isFinite(number) ? number : 0;
+    }
+
+    function formatIndianInput(value) {
+      const cleaned = String(value || "").replace(/,/g, "").replace(/[^0-9.]/g, "");
+      if (!cleaned) return "";
+      const pieces = cleaned.split(".");
+      const integer = pieces.shift().replace(/^0+(?=\d)/, "") || "0";
+      const decimal = pieces.length ? "." + pieces.join("").slice(0, 2) : "";
+      const lastThree = integer.slice(-3);
+      const leading = integer.slice(0, -3);
+      return (leading ? leading.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," : "") + lastThree + decimal;
+    }
+
+    function inr(value, digits = 0) {
+      if (!Number.isFinite(value)) return "—";
+      return new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        maximumFractionDigits: digits,
+        minimumFractionDigits: digits
+      }).format(Math.max(0, value));
+    }
+
+    function dateOnly(value) {
+      if (!value) return null;
+      const parts = value.split("-").map(Number);
+      if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
+      return new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0, 0);
+    }
+
+    function todayLocal() {
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0, 0);
+    }
+
+    function addMonths(date, months) {
+      const originalDay = date.getDate();
+      const result = new Date(date.getFullYear(), date.getMonth() + months, 1, 12, 0, 0, 0);
+      const lastDay = new Date(result.getFullYear(), result.getMonth() + 1, 0).getDate();
+      result.setDate(Math.min(originalDay, lastDay));
+      return result;
+    }
+
+    function monthDifference(from, to) {
+      let months = (to.getFullYear() - from.getFullYear()) * 12 + (to.getMonth() - from.getMonth());
+      if (to.getDate() < from.getDate()) months -= 1;
+      return Math.max(0, months);
+    }
+
+    function formatDate(date) {
+      return new Intl.DateTimeFormat("en-IN", { day: "2-digit", month: "short", year: "numeric" }).format(date);
+    }
+
+    function duration(months) {
+      const safe = Math.max(0, Math.round(months));
+      const years = Math.floor(safe / 12);
+      const remaining = safe % 12;
+      if (!years) return `${remaining} month${remaining === 1 ? "" : "s"}`;
+      if (!remaining) return `${years} year${years === 1 ? "" : "s"}`;
+      return `${years} year${years === 1 ? "" : "s"} ${remaining} month${remaining === 1 ? "" : "s"}`;
+    }
+
+    function wholeNumber(id, fallback = 0) {
+      const value = Number($(id).value);
+      return Number.isInteger(value) ? value : fallback;
+    }
+
+    function simulate(principal, annualRate, regularEmi, extraEmisPerYear = 0, monthLimit = MAX_MONTHS) {
+      const monthlyRate = annualRate / 1200;
+      const extraMonthly = regularEmi * extraEmisPerYear / 12;
+      let balance = principal;
+      let interest = 0;
+      let totalPaid = 0;
+      let months = 0;
+
+      if (principal <= 0 || regularEmi <= 0 || extraEmisPerYear < 0) return { valid: false, reason: "invalid" };
+      if (monthlyRate > 0 && regularEmi + extraMonthly <= principal * monthlyRate) return { valid: false, reason: "emi-too-low" };
+
+      while (balance > 0.005 && months < monthLimit) {
+        const interestPart = balance * monthlyRate;
+        const scheduledPayment = regularEmi + extraMonthly;
+        const payment = Math.min(balance + interestPart, scheduledPayment);
+        balance = Math.max(0, balance + interestPart - payment);
+        interest += interestPart;
+        totalPaid += payment;
+        months++;
+      }
+
+      return {
+        valid: balance <= 0.005,
+        reason: balance <= 0.005 ? "ok" : "limit",
+        months,
+        interest,
+        totalPaid,
+        balance
+      };
+    }
+
+    function paymentForMonths(principal, annualRate, months) {
+      if (months <= 0) return NaN;
+      const r = annualRate / 1200;
+      if (r === 0) return principal / months;
+      return principal * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1);
+    }
+
+    function baselineProjection(principal, annualRate, currentEmi, enteredMaturity, startDate) {
+      const calculated = simulate(principal, annualRate, currentEmi, 0);
+      const enteredMonths = Math.max(1, monthDifference(startDate, enteredMaturity));
+      const months = calculated.valid ? Math.min(enteredMonths, calculated.months) : enteredMonths;
+      const projected = simulate(principal, annualRate, currentEmi, 0, months);
+      return {
+        months,
+        interest: projected.interest,
+        maturity: addMonths(startDate, months),
+        calculated,
+        enteredMonths
+      };
+    }
+
+    function targetDateFromGoal(startDate, maturityDate) {
+      const type = $("goalType").value;
+      const value = Number($("goalValue").value);
+      if (!Number.isInteger(value)) return null;
+      if (type === "years") {
+        if (value < 1 || value > 50) return null;
+        return addMonths(startDate, value * 12);
+      }
+      const currentYear = startDate.getFullYear();
+      if (value < currentYear || value > currentYear + 50) return null;
+      const dueDay = maturityDate.getDate();
+      const decemberLastDay = 31;
+      return new Date(value, 11, Math.min(dueDay, decemberLastDay), 12, 0, 0, 0);
+    }
+
+    function resultRows(rows) {
+      return rows.map(row => `<div class="result-row"><span>${row.label}</span><strong${row.positive ? ' class="positive"' : ""}>${row.value}</strong></div>`).join("");
+    }
+
+    function scenarioResult(sim, startDate, baseline, extraRows = []) {
+      const maturity = addMonths(startDate, sim.months);
+      const monthsSooner = Math.max(0, baseline.months - sim.months);
+      const interestSaved = Math.max(0, baseline.interest - sim.interest);
+      return {
+        maturity,
+        months: sim.months,
+        interest: sim.interest,
+        saved: interestSaved,
+        html: resultRows([
+          ...extraRows,
+          { label: "Revised maturity date", value: formatDate(maturity) },
+          { label: "Loan closes", value: monthsSooner ? `${duration(monthsSooner)} sooner` : "No earlier than baseline", positive: monthsSooner > 0 },
+          { label: "Projected remaining interest", value: inr(sim.interest) },
+          { label: "Estimated interest saved", value: inr(interestSaved), positive: interestSaved > 0 }
+        ])
+      };
+    }
+
+    function setStatus(message = "", type = "error") {
+      const status = $("status");
+      status.textContent = message;
+      status.className = message ? `status show ${type}` : "status";
+    }
+
+    function setBaseline(baseline, enteredMaturity, startDate) {
+      const values = [
+        formatDate(enteredMaturity),
+        duration(monthDifference(startDate, enteredMaturity)),
+        inr(baseline.interest),
+        baseline.calculated.valid ? formatDate(addMonths(startDate, baseline.calculated.months)) : "EMI too low"
+      ];
+      $("baseline").querySelectorAll("strong").forEach((element, index) => { element.textContent = values[index]; });
+    }
+
+    function readCoreInputs() {
+      return {
+        principal: parseMoney($("loanAmount").value),
+        annualRate: Number($("annualRate").value),
+        currentEmi: parseMoney($("currentEmi").value),
+        maturityDate: dateOnly($("maturityDate").value),
+        startDate: todayLocal()
+      };
+    }
+
+    function validateCore(input) {
+      if (!(input.principal > 0)) return "Enter a valid outstanding loan amount greater than zero.";
+      if (!(input.annualRate >= 0 && input.annualRate <= 100)) return "Enter a valid annual interest rate from 0% to 100%.";
+      if (!(input.currentEmi > 0)) return "Enter a valid current monthly EMI greater than zero.";
+      if (!input.maturityDate || input.maturityDate <= input.startDate) return "Choose a current maturity date after today.";
+      const check = simulate(input.principal, input.annualRate, input.currentEmi, 0);
+      if (!check.valid && check.reason === "emi-too-low") return "The current EMI does not cover the first month's interest. Increase the EMI or check the loan details.";
+      return "";
+    }
+
+    function calculateAll() {
+      setStatus();
+      const input = readCoreInputs();
+      const validationError = validateCore(input);
+      if (validationError) { setStatus(validationError); return; }
+
+      const baseline = baselineProjection(input.principal, input.annualRate, input.currentEmi, input.maturityDate, input.startDate);
+      setBaseline(baseline, input.maturityDate, input.startDate);
+
+      let warning = "";
+      if (baseline.calculated.valid) {
+        const difference = Math.abs(baseline.calculated.months - baseline.enteredMonths);
+        if (difference > 1) {
+          warning = `Note: the entered maturity differs from the mathematical payoff at the current EMI by about ${duration(difference)}. Savings use the earlier payoff as the baseline.`;
+        }
+      }
+
+      const scenarios = {};
+
+      const newEmi = parseMoney($("newEmi").value);
+      const newEmiExtras = wholeNumber("newEmiExtras", -1);
+      if (newEmi > 0 && newEmiExtras >= 0 && newEmiExtras <= 24) {
+        const sim = simulate(input.principal, input.annualRate, newEmi, newEmiExtras);
+        if (sim.valid) {
+          scenarios.higherEmi = scenarioResult(sim, input.startDate, baseline, [
+            { label: "Monthly EMI", value: inr(newEmi) },
+            { label: "Extra EMIs / year", value: String(newEmiExtras) }
+          ]);
+          $("resultHigherEmi").innerHTML = scenarios.higherEmi.html;
+        } else {
+          $("resultHigherEmi").innerHTML = '<p class="placeholder">This EMI is too low to repay the loan.</p>';
+        }
+      } else {
+        $("resultHigherEmi").innerHTML = '<p class="placeholder">Enter a proposed EMI and 0–24 extra payments.</p>';
+      }
+
+      const targetDate = targetDateFromGoal(input.startDate, input.maturityDate);
+      const goalExtras = wholeNumber("goalExtras", -1);
+      if (targetDate && targetDate > input.startDate && goalExtras >= 0 && goalExtras <= 24) {
+        const targetMonths = Math.max(1, monthDifference(input.startDate, targetDate));
+        const totalMonthlyNeeded = paymentForMonths(input.principal, input.annualRate, targetMonths);
+        const requiredRegularEmi = totalMonthlyNeeded / (1 + goalExtras / 12);
+        const sim = simulate(input.principal, input.annualRate, requiredRegularEmi, goalExtras, targetMonths + 2);
+        if (sim.valid) {
+          scenarios.goal = scenarioResult(sim, input.startDate, baseline, [
+            { label: "Required regular EMI", value: inr(Math.ceil(requiredRegularEmi)), positive: true },
+            { label: "Target payoff date", value: formatDate(targetDate) },
+            { label: "Extra EMIs / year", value: String(goalExtras) }
+          ]);
+          $("resultGoal").innerHTML = scenarios.goal.html;
+        }
+      } else {
+        $("resultGoal").innerHTML = '<p class="placeholder">Enter a valid payoff period or future target year.</p>';
+      }
+
+      const standaloneExtras = wholeNumber("standaloneExtras", -1);
+      if (standaloneExtras >= 0 && standaloneExtras <= 24) {
+        const sim = simulate(input.principal, input.annualRate, input.currentEmi, standaloneExtras);
+        if (sim.valid) {
+          scenarios.extras = scenarioResult(sim, input.startDate, baseline, [
+            { label: "Current monthly EMI", value: inr(input.currentEmi) },
+            { label: "Extra EMIs / year", value: String(standaloneExtras) }
+          ]);
+          $("resultExtras").innerHTML = scenarios.extras.html;
+        } else {
+          $("resultExtras").innerHTML = '<p class="placeholder">These payments are not sufficient to repay the loan.</p>';
+        }
+      } else {
+        $("resultExtras").innerHTML = '<p class="placeholder">Enter a whole number from 0 to 24.</p>';
+      }
+
+      latestResult = {
+        calculatedAt: new Date().toISOString(),
+        input: {
+          principal: input.principal,
+          annualRate: input.annualRate,
+          currentEmi: input.currentEmi,
+          maturityDate: $("maturityDate").value
+        },
+        baseline: {
+          maturity: formatDate(input.maturityDate),
+          interest: baseline.interest,
+          months: baseline.months
+        },
+        scenarios
+      };
+
+      saveHistory(latestResult);
+      if (warning) setStatus(warning, "warning");
+    }
+
+    function summarizeScenario(name, result) {
+      if (!result) return `${name}: Not calculated`;
+      return `${name}: ${formatDate(result.maturity)} | Interest ${inr(result.interest)} | Saved ${inr(result.saved)}`;
+    }
+
+    function historyRecord(result) {
+      return {
+        calculatedAt: result.calculatedAt,
+        loan: result.input.principal,
+        rate: result.input.annualRate,
+        emi: result.input.currentEmi,
+        maturity: result.input.maturityDate,
+        higher: result.scenarios.higherEmi ? formatDate(result.scenarios.higherEmi.maturity) : "—",
+        goal: result.scenarios.goal ? formatDate(result.scenarios.goal.maturity) : "—",
+        extras: result.scenarios.extras ? formatDate(result.scenarios.extras.maturity) : "—"
+      };
+    }
+
+    function getHistory() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (_) { return []; }
+    }
+
+    function saveHistory(result) {
+      const history = getHistory();
+      history.unshift(historyRecord(result));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 7)));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const history = getHistory();
+      if (!history.length) {
+        $("historyContainer").innerHTML = '<div class="empty-history">No saved calculations yet.</div>';
+        return;
+      }
+      const rows = history.map(item => `<tr>
+        <td>${new Date(item.calculatedAt).toLocaleString("en-IN")}</td>
+        <td>${inr(item.loan)}</td>
+        <td>${Number(item.rate).toFixed(2)}%</td>
+        <td>${inr(item.emi)}</td>
+        <td>${item.maturity}</td>
+        <td>${item.higher}</td>
+        <td>${item.goal}</td>
+        <td>${item.extras}</td>
+      </tr>`).join("");
+      $("historyContainer").innerHTML = `<table>
+        <thead><tr><th>Calculated</th><th>Loan</th><th>ROI</th><th>Current EMI</th><th>Current maturity</th><th>Higher EMI</th><th>Goal</th><th>Extra EMI</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+    }
+
+    function downloadCurrentResult() {
+      if (!latestResult) {
+        setStatus("Calculate the loan scenarios before downloading a result.", "warning");
+        return;
+      }
+      const r = latestResult;
+      const lines = [
+        "HOME LOAN PAYOFF CALCULATOR",
+        "===========================",
+        `Calculated: ${new Date(r.calculatedAt).toLocaleString("en-IN")}`,
+        `Outstanding loan: ${inr(r.input.principal)}`,
+        `Annual interest rate: ${r.input.annualRate.toFixed(2)}%`,
+        `Current monthly EMI: ${inr(r.input.currentEmi)}`,
+        `Entered current maturity: ${r.input.maturityDate}`,
+        `Projected baseline interest: ${inr(r.baseline.interest)}`,
+        "",
+        summarizeScenario("Increase monthly EMI", r.scenarios.higherEmi),
+        summarizeScenario("Payoff period/year", r.scenarios.goal),
+        summarizeScenario("Extra EMI payments/year", r.scenarios.extras),
+        "",
+        "Estimates only. Actual lender calculations may differ."
+      ];
+      const blob = new Blob([lines.join("\r\n")], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `home-loan-result-${new Date().toISOString().slice(0, 10)}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function resetForm() {
+      ["loanAmount", "annualRate", "currentEmi", "maturityDate", "newEmi", "goalValue"].forEach(id => { $(id).value = ""; });
+      $("newEmiExtras").value = "0";
+      $("goalExtras").value = "0";
+      $("standaloneExtras").value = "1";
+      $("goalType").value = "years";
+      updateGoalLabels();
+      $("baseline").querySelectorAll("strong").forEach(element => { element.textContent = "—"; });
+      ["resultHigherEmi", "resultGoal", "resultExtras"].forEach(id => { $(id).innerHTML = '<p class="placeholder">Enter values and calculate.</p>'; });
+      latestResult = null;
+      setStatus();
+      $("loanAmount").focus();
+    }
+
+    function updateGoalLabels() {
+      const isYear = $("goalType").value === "year";
+      $("goalValueLabel").textContent = isYear ? "Target Payoff Year" : "Payoff Period (Years)";
+      $("goalValue").placeholder = isYear ? String(todayLocal().getFullYear() + 3) : "3";
+      $("goalHint").textContent = isYear ? "Example: enter a future year such as 2030." : "Example: 3 means three years from today.";
+    }
+
+    moneyInputs.forEach(input => {
+      input.addEventListener("input", () => {
+        const oldLength = input.value.length;
+        const oldPosition = input.selectionStart || oldLength;
+        input.value = formatIndianInput(input.value);
+        const shift = input.value.length - oldLength;
+        const next = Math.max(0, oldPosition + shift);
+        requestAnimationFrame(() => input.setSelectionRange(next, next));
+      });
+    });
+
+    $("calculateBtn").addEventListener("click", calculateAll);
+    $("resetBtn").addEventListener("click", resetForm);
+    $("downloadBtn").addEventListener("click", downloadCurrentResult);
+    $("goalType").addEventListener("change", updateGoalLabels);
+    $("clearHistoryBtn").addEventListener("click", () => {
+      localStorage.removeItem(STORAGE_KEY);
+      renderHistory();
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Enter" && !event.ctrlKey && !event.metaKey) calculateAll();
+    });
+
+    updateGoalLabels();
+    renderHistory();
+  </script>
+</body>
+</html>
