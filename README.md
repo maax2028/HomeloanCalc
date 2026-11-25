@@ -8,12 +8,19 @@ Calculate the impact of higher monthly EMIs, extra annual EMI payments, or a tar
 Highlights
 
 ✅ Higher EMI comparison
+
 ✅ Extra EMI / prepayment scenarios
+
 ✅ Target payoff year or period
+
 ✅ Estimated interest savings
+
 ✅ Revised maturity date
+
 ✅ Indian currency formatting
+
 ✅ Last 7 calculations stored locally
+
 ✅ Responsive mobile-friendly design
 
 
